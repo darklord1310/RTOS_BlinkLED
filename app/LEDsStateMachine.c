@@ -2,10 +2,9 @@
 
 
 /*
- *	Describe blinking of LEDs independently
+ *	Describe blinking of LED 3
  *
  *	LED3 blinks at 240ms
- *	LED4 blinks at 1 s
  *
  */
 void SD_LED3(State *state,int BlinkRate)
@@ -37,21 +36,49 @@ void SD_LED3(State *state,int BlinkRate)
 }
 
 
+/*
+ *	Describe blinking of LED 4
+ *
+ *	LED4 blinks at 1s
+ *
+ */
+void SD_LED4(State *state,int BlinkRate)
+{
+	static uint32_t previousTime = 0;
+	static int here = 0;
+
+	switch(*state)
+	{
+		case initial: *state = ON;
+					  break;
+
+		case ON : turnOnLED4();
+				  if( getCurrentTime() - previousTime == BlinkRate )
+				  {
+					 previousTime = getCurrentTime();
+					 *state = OFF;
+				   }
+				   break;
+
+		case OFF : turnOffLED4();
+				   if( getCurrentTime() - previousTime == BlinkRate)
+				   {
+						previousTime = getCurrentTime();
+						*state = ON;
+				   }
+				  break;
+	}
+}
 
 
 /*
- *	Describe blinking of LEDs independently
- *
- *	LED3 blinks at 240ms
- *	LED4 blinks at 1 s
- *
- *	The above case is by default, but when user button is pressed
+ *	By default, LED4 blinks at 1s
+ *	But when user button is pressed
  *	Then,
- *			LED3 blink rate remains same
- *			LED4 blinks at 50ms which is faster than LED3
+ *			LED4 blinks at 100ms which is faster than LED3
  *
  */
-void SD_LED4(State *state,int *BlinkRate)
+void SD_LED4_blinkFasterWhenPress(State *state,int *BlinkRate)
 {
 	static uint32_t previousTime = 0;
 
